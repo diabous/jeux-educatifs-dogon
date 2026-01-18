@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Quiz – Patrimoine culturel Dogon</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: linear-gradient(135deg, #f4f0e8, #fff);
+  margin: 0;
+  color: #333;
+}
+
+.container {
+  max-width: 850px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* EN-TÊTE AVEC LOGO */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.header img {
+  width: 70px;
+  height: 70px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 1.8em;
+  color: #7b3f00;
+}
+
+#quiz-box, #result-box {
+  background: #fff;
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+}
+
+.question-image {
+  width: 100%;
+  max-height: 260px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  border: 3px solid #e6c97a;
+}
+
+.question {
+  font-size: 1.2em;
+  margin-bottom: 18px;
+}
+
+.answers button {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 10px;
+  background: #f1e1c6;
+  font-size: 1em;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.answers button:hover {
+  background: #d9a441;
+  color: #fff;
+  transform: scale(1.02);
+}
+
+.answers button.correct { background: #4caf50; color: #fff; }
+.answers button.wrong   { background: #e53935; color: #fff; }
+
+#next-btn {
+  margin-top: 15px;
+  padding: 14px;
+  width: 100%;
+  background: #7b3f00;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1em;
+  cursor: pointer;
+  display: none;
+}
+
+#result-box {
+  display: none;
+  text-align: center;
+}
+
+.badge {
+  width: 180px;
+  margin: 20px auto;
+  animation: pop 0.8s ease-out, glow 2s infinite alternate;
+}
+
+@keyframes pop {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+@keyframes glow {
+  from { filter: drop-shadow(0 0 5px gold); }
+  to   { filter: drop-shadow(0 0 20px gold); }
+}
+
+.badge-title {
+  font-size: 1.4em;
+  color: #7b3f00;
+  margin-top: 10px;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 25px;
+  font-size: 0.9em;
+  opacity: 0.7;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <img src="images/logo-quiz.png" alt="Logo Quiz">
+    <h1>Quiz – Patrimoine culturel Dogon</h1>
+  </div>
+
+  <div id="quiz-box">
+    <img id="question-image" class="question-image" alt="">
+    <div class="question" id="question"></div>
+    <div class="answers" id="answers"></div>
+    <button id="next-btn">Question suivante</button>
+  </div>
+
+  <div id="result-box">
+    <h2>🎉 Quiz terminé !</h2>
+    <img id="badge-img" class="badge" alt="">
+    <div class="badge-title" id="badge-title"></div>
+    <p id="score-text"></p>
+    <button onclick="location.reload()">Rejouer</button>
+  </div>
+
+  <div class="footer">
+    Un jeu éducatif et culturel – Utilisable hors ligne
+  </div>
+
+</div>
+
+<script>
+// 🔊 Sons
+const soundCorrect = new Audio("audio/correct.mp3");
+const soundWrong   = new Audio("audio/wrong.mp3");
+const soundBadgeOr = new Audio("audio/badge-or.mp3");
+const soundBadgeArgent = new Audio("audio/badge-argent.mp3");
+const soundBadgeBronze = new Audio("audio/badge-bronze.mp3");
+
+// 🔀 Mélange
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+// ✅ 20 QUESTIONS DOGON
+const questions = [
+{ q:"À quelle société secrète appartiennent les masques Dogon ?", i:"images/q1.jpg", correct:"Awa", options:["Binou","Awa","Komo","Nama"] },
+{ q:"À l’origine, qui a découvert les masques Dogon ?", i:"images/q2.jpg", correct:"Une femme nommée Yassinè", options:["Un chasseur","Un Hogon","Une femme nommée Yassinè","Un esprit"] },
+{ q:"De quel village était originaire Yassine ?", i:"images/q3.jpg", correct:"Yanda", options:["Sanga","Yanda","Bandiagara","Kani Kombolé"] },
+{ q:"Quelle femme est autorisée à avoir accès aux masques ?", i:"images/q4.jpg", correct:"Lassiguinè", options:["La mère du Hogon","La prêtresse du Binou","Lassiguinè","La doyenne"] },
+{ q:"Quelle fête a lieu tous les 60 ans ?", i:"images/q5.jpg", correct:"Sigui", options:["Dama","Sigui","Gamou","Tobaski"] },
+
+{ q:"Les masques Dogon sont fabriqués principalement en :", i:"images/q6.jpg", correct:"Bois", options:["Pierre","Bois","Bronze","Argile"] },
+{ q:"Que représentent les masques Dogon ?", i:"images/q7.jpg", correct:"Des humains et animaux", options:["Des esprits","Des humains et animaux","Des dieux","Des objets"] },
+{ q:"Quel est le rôle des masques lors des funérailles ?", i:"images/q8.jpg", correct:"Guider l’âme", options:["Décorer","Danser","Guider l’âme","Protéger"] },
+{ q:"Comment s’appelle la cérémonie funéraire Dogon ?", i:"images/q9.jpg", correct:"Dama", options:["Sigui","Dama","Binou","Toguna"] },
+{ q:"Quel est le masque le plus célèbre ?", i:"images/q10.jpg", correct:"Kanaga", options:["Kanaga","Sirige","Satimbe","Walu"] },
+
+{ q:"Que symbolise le masque Kanaga ?", i:"images/q11.jpg", correct:"Le lien ciel-terre", options:["La chasse","Le lien ciel-terre","La guerre","La pluie"] },
+{ q:"Quelle langue secrète utilisent les initiés ?", i:"images/q12.jpg", correct:"Sigui sô", options:["Dogosso","Sigui sô","Bambara","Peulh"] },
+{ q:"Qui enseigne la langue secrète ?", i:"images/q13.jpg", correct:"Les anciens", options:["Les femmes","Les enfants","Les anciens","Les griots"] },
+{ q:"Quelle condition est requise pour intégrer la société des masques ?", i:"images/q14.jpg", correct:"Être circoncis", options:["Être riche","Être circoncis","Être marié","Être Hogon"] },
+{ q:"Que symbolise le buffle ?", i:"images/q15.jpg", correct:"La fertilité", options:["La force","La fertilité","La ruse","La guerre"] },
+
+{ q:"Quel animal symbolise la ruse ?", i:"images/q16.jpg", correct:"Lapin", options:["Chacal","Lapin","Serpent","Singe"] },
+{ q:"Pourquoi le feu est-il interdit près des masques ?", i:"images/q17.jpg", correct:"Force vitale", options:["Danger","Respect","Force vitale","Bois"] },
+{ q:"En quelle année le Pays Dogon fut classé à l’UNESCO ?", i:"images/q18.jpg", correct:"1989", options:["1975","1983","1989","1995"] },
+{ q:"La transmission culturelle Dogon est surtout :", i:"images/q19.jpg", correct:"Orale", options:["Écrite","Numérique","Orale","Moderne"] },
+{ q:"Les masques Dogon représentent pour le Mali :", i:"images/q20.jpg", correct:"Une mémoire culturelle", options:["Un décor","Une mémoire culturelle","Un jeu","Une mode"] }
+];
+
+shuffle(questions);
+
+let index = 0, score = 0;
+const qEl = document.getElementById("question");
+const imgEl = document.getElementById("question-image");
+const aEl = document.getElementById("answers");
+const nextBtn = document.getElementById("next-btn");
+
+function loadQuestion() {
+  nextBtn.style.display = "none";
+  aEl.innerHTML = "";
+
+  const q = questions[index];
+  const opts = [...q.options];
+  shuffle(opts);
+
+  qEl.textContent = (index + 1) + ". " + q.q;
+  imgEl.src = q.i;
+
+  opts.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.textContent = opt;
+    btn.onclick = () => checkAnswer(btn, opt, q.correct);
+    aEl.appendChild(btn);
+  });
+}
+
+function checkAnswer(btn, chosen, correct) {
+  document.querySelectorAll(".answers button").forEach(b => b.disabled = true);
+
+  if (chosen === correct) {
+    btn.classList.add("correct");
+    soundCorrect.play();
+    score++;
+  } else {
+    btn.classList.add("wrong");
+    [...aEl.children].forEach(b => { if (b.textContent === correct) b.classList.add("correct"); });
+    soundWrong.play();
+  }
+  nextBtn.style.display = "block";
+}
+
+nextBtn.onclick = () => {
+  index++;
+  if (index < questions.length) loadQuestion();
+  else showResult();
+};
+
+function showResult() {
+  document.getElementById("quiz-box").style.display = "none";
+  document.getElementById("result-box").style.display = "block";
+
+  let badge, title, sound;
+
+  if (score >= 16) {
+    badge = "images/badge-or.png";
+    title = "🥇 Gardien du patrimoine Dogon";
+    sound = soundBadgeOr;
+  } else if (score >= 10) {
+    badge = "images/badge-argent.png";
+    title = "🥈 Initié Dogon";
+    sound = soundBadgeArgent;
+  } else {
+    badge = "images/badge-bronze.png";
+    title = "🟤 Apprenti du patrimoine";
+    sound = soundBadgeBronze;
+  }
+
+  document.getElementById("badge-img").src = badge;
+  document.getElementById("badge-title").textContent = title;
+  document.getElementById("score-text").textContent =
+    `Votre score : ${score} / ${questions.length}`;
+
+  sound.play();
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>

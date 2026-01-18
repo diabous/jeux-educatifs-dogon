@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Pendu – Patrimoine culturel Dogon</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: linear-gradient(135deg, #f5efe6, #fff);
+  margin: 0;
+  color: #333;
+}
+
+.container {
+  max-width: 700px;
+  margin: auto;
+  padding: 20px;
+  text-align: center;
+}
+
+h1 {
+  color: #7b3f00;
+}
+
+.box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 18px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+}
+
+.word {
+  font-size: 2em;
+  letter-spacing: 10px;
+  margin: 20px 0;
+}
+
+.keyboard button {
+  margin: 5px;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  background: #f1e1c6;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+.keyboard button:disabled {
+  background: #ddd;
+  cursor: not-allowed;
+}
+
+.info {
+  margin: 15px 0;
+  font-style: italic;
+  color: #555;
+}
+
+.status {
+  font-weight: bold;
+  margin-top: 15px;
+}
+
+button.restart {
+  margin-top: 20px;
+  padding: 12px 20px;
+  background: #7b3f00;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>🔤 Pendu culturel Dogon</h1>
+
+  <div class="box">
+    <div class="info" id="hint"></div>
+    <div class="word" id="word"></div>
+    <div class="status" id="status"></div>
+    <div class="keyboard" id="keyboard"></div>
+    <button class="restart" onclick="startGame()">🔁 Rejouer</button>
+  </div>
+
+  <p style="opacity:0.7;margin-top:15px">
+    Jeu éducatif – Patrimoine culturel Dogon – Hors ligne
+  </p>
+</div>
+
+<script>
+// 🔊 Sons
+const soundGood = new Audio("audio/good.mp3");
+const soundBad  = new Audio("audio/bad.mp3");
+const soundWin  = new Audio("audio/win.mp3");
+const soundLose = new Audio("audio/lose.mp3");
+
+// 🧠 Mots culturels Dogon
+const words = [
+  { word:"AWA", hint:"Société secrète liée aux masques Dogon", info:"La société Awa est responsable des masques rituels." },
+  { word:"KANAGA", hint:"Masque le plus célèbre", info:"Le Kanaga symbolise le lien entre le ciel et la terre." },
+  { word:"SIGUI", hint:"Cérémonie qui a lieu tous les 60 ans", info:"Le Sigui marque la transmission du savoir ancestral." },
+  { word:"DAMA", hint:"Cérémonie funéraire Dogon", info:"Le Dama guide l’âme du défunt vers les ancêtres." },
+  { word:"TOGUNA", hint:"Maison de la parole", info:"La Toguna est l’espace de discussion des anciens." },
+  { word:"HOGON", hint:"Chef spirituel Dogon", info:"Le Hogon est le gardien des traditions." },
+  { word:"YANDA", hint:"Village lié à la découverte des masques", info:"Yanda est lié à la légende de Yassinè." },
+  { word:"LAPIN", hint:"Animal symbole de ruse", info:"Le lapin représente l’intelligence et la ruse." },
+  { word:"UNESCO", hint:"Organisation ayant classé le Pays Dogon", info:"Le Pays Dogon est classé patrimoine mondial." }
+];
+
+let selectedWord, guessed, attempts;
+let gameOver = false;
+
+// ▶️ Démarrage
+function startGame() {
+  const item = words[Math.floor(Math.random() * words.length)];
+  selectedWord = item.word;
+  guessed = [];
+  attempts = 6;
+  gameOver = false;
+
+  document.getElementById("hint").textContent = "Indice : " + item.hint;
+  document.getElementById("status").textContent = "Erreurs restantes : " + attempts;
+  createKeyboard();
+  updateWord();
+}
+
+// 🔤 Affichage du mot
+function updateWord() {
+  const display = selectedWord
+    .split("")
+    .map(l => guessed.includes(l) ? l : "_")
+    .join(" ");
+
+  document.getElementById("word").textContent = display;
+
+  if (!display.includes("_") && !gameOver) {
+    gameOver = true;
+    soundWin.currentTime = 0;
+    soundWin.play();
+    document.getElementById("status").textContent = "🎉 Bravo ! " + getInfo();
+    disableKeyboard();
+  }
+}
+
+// ⌨️ Clavier
+function createKeyboard() {
+  const keys = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const kb = document.getElementById("keyboard");
+  kb.innerHTML = "";
+
+  keys.split("").forEach(letter => {
+    const btn = document.createElement("button");
+    btn.textContent = letter;
+    btn.onclick = () => guessLetter(letter, btn);
+    kb.appendChild(btn);
+  });
+}
+
+// 🎯 Vérification
+function guessLetter(letter, btn) {
+  if (gameOver) return;
+
+  btn.disabled = true;
+
+  if (selectedWord.includes(letter)) {
+    guessed.push(letter);
+    soundGood.currentTime = 0;
+    soundGood.play();
+  } else {
+    attempts--;
+    soundBad.currentTime = 0;
+    soundBad.play();
+  }
+
+  document.getElementById("status").textContent = "Erreurs restantes : " + attempts;
+  updateWord();
+
+  if (attempts <= 0 && !gameOver) {
+    gameOver = true;
+    document.getElementById("word").textContent = selectedWord.split("").join(" ");
+    document.getElementById("status").textContent = "❌ Perdu ! " + getInfo();
+    soundLose.currentTime = 0;
+    soundLose.play();
+    disableKeyboard();
+  }
+}
+
+// 📘 Info finale
+function getInfo() {
+  return words.find(w => w.word === selectedWord).info;
+}
+
+function disableKeyboard() {
+  document.querySelectorAll(".keyboard button").forEach(b => b.disabled = true);
+}
+
+// ▶️ Lancer automatiquement
+startGame();
+</script>
+
+</body>
+</html>

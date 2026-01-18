@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Jeux éducatifs culturels Dogon</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(#fffbe6, #e6f5ec);
+  text-align: center;
+}
+
+/* ===== CONTENEUR ===== */
+#portal {
+  padding: 30px 20px;
+}
+
+/* ===== LOGOS ===== */
+.logos {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 25px;
+}
+
+.logos img {
+  height: 100px;
+}
+
+/* ===== TITRES ===== */
+h1 {
+  color: #2c7a4b;
+}
+
+.subtitle {
+  font-size: 18px;
+  margin-bottom: 30px;
+}
+
+/* ===== GRILLE JEUX ===== */
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 25px;
+  max-width: 900px;
+  margin: auto;
+}
+
+/* ===== CARTES ===== */
+.game-card {
+  background: white;
+  padding: 22px;
+  border-radius: 18px;
+  text-decoration: none;
+  color: black;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.game-card img {
+  height: 80px;
+  margin-bottom: 12px;
+}
+
+.game-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(44,122,75,0.7);
+}
+
+/* ===== FOOTER ===== */
+footer {
+  margin-top: 35px;
+  font-style: italic;
+  color: #555;
+}
+</style>
+</head>
+
+<body>
+
+<div id="portal">
+
+  <div class="logos">
+    <img src="images/logo-service.png" alt="Logo Service">
+    <img src="images/logo-festival.png" alt="Logo Festival">
+  </div>
+
+  <h1>🎓 Jeux éducatifs culturels Dogon</h1>
+
+  <p class="subtitle">
+    Découvre le patrimoine culturel Dogon à travers des jeux ludiques et éducatifs
+  </p>
+
+  <div class="games-grid">
+
+    <a href="puzzle/index.html" class="game-card">
+      <img src="images/icons/puzzle.png">
+      <h3>🧩 Puzzle</h3>
+      <p>Reconstitue les images du patrimoine Dogon</p>
+    </a>
+
+    <a href="quiz/index.html" class="game-card">
+      <img src="images/icons/quiz.png">
+      <h3>❓ Quiz</h3>
+      <p>Teste tes connaissances culturelles</p>
+    </a>
+
+    <a href="pendu/index.html" class="game-card">
+      <img src="images/icons/pendu.png">
+      <h3>🔤 Pendu</h3>
+      <p>Devine les mots du patrimoine Dogon</p>
+    </a>
+
+  </div>
+
+  <footer>
+    Jeux éducatifs – Utilisables hors ligne
+  </footer>
+
+</div>
+
+</body>
+</html>
