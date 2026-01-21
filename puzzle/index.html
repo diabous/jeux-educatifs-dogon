@@ -2,320 +2,299 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Puzzle sur le Patrimoine Culturel Dogon</title>
+<title>Puzzle – Patrimoine Culturel Dogon</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-/* ===== BASE ===== */
-body {
-  font-family: Arial, sans-serif;
-  background: #f4f4f4;
-  text-align: center;
-  margin: 0;
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  text-align:center;
+  background:#f4f4f4;
 }
 
-/* ===== INTRO ===== */
-#intro {
-  min-height: 100vh;
-  background: linear-gradient(#fffbe6, #e6f5ec);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
+/* INTRO */
+#intro{
+  min-height:100vh;
+  background:linear-gradient(#fffbe6,#e6f5ec);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+.intro-logos{display:flex;gap:35px;margin-bottom:25px}
+.intro-logos img{height:100px}
+.intro-section{
+  background:#fff;
+  padding:18px;
+  margin:12px;
+  border-radius:14px;
+  max-width:560px;
+  box-shadow:0 6px 12px rgba(0,0,0,.12)
+}
+#intro button{
+  margin-top:20px;
+  padding:14px 30px;
+  font-size:18px;
+  background:#2c7a4b;
+  color:#fff;
+  border:none;
+  border-radius:10px;
+  cursor:pointer
+}
+.intro-footer{margin-top:25px;font-style:italic;color:#555}
+
+/* MENU */
+#menu{display:none;padding:20px}
+#theme-selection{
+  display:flex;
+  justify-content:center;
+  gap:18px;
+  flex-wrap:wrap;
+  margin:20px 0
+}
+.thumbnail{
+  width:110px;height:110px;
+  border-radius:12px;
+  cursor:pointer;
+  border:3px solid #333;
+  transition:.25s
+}
+.thumbnail:hover{transform:scale(1.1)}
+.thumbnail.selected{
+  border-color:gold;
+  box-shadow:0 0 18px gold
+}
+button{
+  margin:10px;
+  padding:12px 20px;
+  border-radius:8px;
+  border:none;
+  background:#2c7a4b;
+  color:#fff;
+  cursor:pointer
 }
 
-.intro-logos {
-  display: flex;
-  gap: 35px;
-  margin-bottom: 25px;
+/* JEU */
+#game{display:none;padding:20px}
+#puzzle{
+  margin:20px auto;
+  display:grid;
+  border:3px solid #333
+}
+.piece{border:1px solid #ccc;cursor:grab}
+
+/* INFO */
+#info-box{
+  display:none;
+  position:fixed;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  background:#fffbe6;
+  border:3px solid gold;
+  padding:25px;
+  border-radius:14px;
+  max-width:460px;
+  box-shadow:0 0 25px rgba(0,0,0,.35);
+  z-index:999
 }
 
-.intro-logos img {
-  height: 100px;
-}
-
-.intro-section {
-  background: white;
-  padding: 18px;
-  margin: 12px;
-  border-radius: 14px;
-  max-width: 560px;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.12);
-}
-
-#intro button {
-  margin-top: 20px;
-  padding: 14px 30px;
-  font-size: 18px;
-  background: #2c7a4b;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-#intro button:hover {
-  background: #256a40;
-}
-
-.intro-footer {
-  margin-top: 25px;
-  font-size: 14px;
-  font-style: italic;
-  color: #555;
-}
-
-/* ===== MENU ===== */
-#menu {
-  display: none;
-  padding: 20px;
-}
-
-#theme-selection {
-  display: flex;
-  justify-content: center;
-  gap: 18px;
-  flex-wrap: wrap;
-  margin: 20px 0;
-}
-
-.thumbnail {
-  width: 110px;
-  height: 110px;
-  border-radius: 12px;
-  cursor: pointer;
-  border: 3px solid #333;
-  transition: transform 0.25s, box-shadow 0.25s;
-}
-
-.thumbnail:hover {
-  transform: scale(1.1);
-}
-
-.thumbnail.selected {
-  border-color: gold;
-  box-shadow: 0 0 18px gold;
-}
-
-button {
-  margin: 10px;
-  padding: 12px 20px;
-  border-radius: 8px;
-  border: none;
-  background: #2c7a4b;
-  color: white;
-  cursor: pointer;
-}
-
-button:hover {
-  background: #256a40;
-}
-
-/* ===== JEU ===== */
-#game {
-  display: none;
-  padding: 20px;
-}
-
-#puzzle {
-  margin: 20px auto;
-  display: grid;
-  border: 3px solid #333;
-}
-
-.piece {
-  border: 1px solid #ccc;
-  cursor: grab;
-}
-
-/* ===== MESSAGE EDUCATIF ===== */
-#info-box {
-  display: none;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: #fffbe6;
-  border: 3px solid gold;
-  padding: 25px;
-  border-radius: 14px;
-  max-width: 460px;
-  box-shadow: 0 0 25px rgba(0,0,0,0.35);
-  z-index: 1000;
+/* STATS */
+#stats{
+  margin-top:15px;
+  font-size:14px;
+  opacity:.8
 }
 </style>
 </head>
 
 <body>
 
-<!-- ===== INTRO ===== -->
+<!-- INTRO -->
 <div id="intro">
   <div class="intro-logos">
-    <img src="images/logo-service.png" alt="Logo Service">
-    <img src="images/logo-festival.png" alt="Logo Festival">
+    <img src="images/logo-service.png">
+    <img src="images/logo-festival.png">
   </div>
 
-  <h1>🧩 Puzzle sur le Patrimoine Culturel Dogon</h1>
+  <h1>🧩 Puzzle Patrimoine Culturel Dogon</h1>
 
   <div class="intro-section">
     <h3>Pourquoi ce jeu ?</h3>
-    <p>
-      Ce jeu éducatif permet de découvrir le patrimoine culturel Dogon
-      à travers une expérience ludique, interactive et accessible hors ligne.
-    </p>
+    <p>Découvrir le patrimoine Dogon par le jeu.</p>
   </div>
 
   <div class="intro-section">
     <h3>Ce que tu vas apprendre</h3>
     <ul style="text-align:left">
-      <li>✔ Les richesses culturelles du peuple Dogon</li>
-      <li>✔ L’importance du patrimoine culturel</li>
-      <li>✔ La logique, la patience et l’observation</li>
+      <li>✔ Culture Dogon</li>
+      <li>✔ Observation</li>
+      <li>✔ Patience</li>
     </ul>
   </div>
 
-  <button onclick="startIntro()">🎮 Commencer le jeu</button>
-
-  <p class="intro-footer">
-    Un jeu éducatif et culturel – Utilisable hors ligne
-  </p>
+  <button onclick="startIntro()">🎮 Commencer</button>
+  <p class="intro-footer">Jeu éducatif – Hors ligne</p>
 </div>
 
-<!-- ===== MENU ===== -->
+<!-- MENU -->
 <div id="menu">
   <h2>Choisis un thème</h2>
 
   <div id="theme-selection">
-    <img src="images/image1.jpg" class="thumbnail" onclick="setImage('images/image1.jpg', this)">
-    <img src="images/image2.jpg" class="thumbnail" onclick="setImage('images/image2.jpg', this)">
-    <img src="images/image3.jpg" class="thumbnail" onclick="setImage('images/image3.jpg', this)">
-    <img src="images/image4.jpg" class="thumbnail" onclick="setImage('images/image4.jpg', this)">
+    <img src="images/image1.jpg" class="thumbnail" onclick="setImage(this)">
+    <img src="images/image2.jpg" class="thumbnail" onclick="setImage(this)">
+    <img src="images/image3.jpg" class="thumbnail" onclick="setImage(this)">
+    <img src="images/image4.jpg" class="thumbnail" onclick="setImage(this)">
   </div>
 
-  <h3>Choisis le niveau</h3>
+  <h3>Niveau</h3>
   <button onclick="launchGame(3)">Facile (9 pièces)</button>
   <button onclick="launchGame(4)">Difficile (16 pièces)</button>
+
+  <div id="stats"></div>
 </div>
 
-<!-- ===== JEU ===== -->
+<!-- JEU -->
 <div id="game">
-  <button onclick="backToMenu()">⬅ Retour au menu</button>
+  <button onclick="backToMenu()">⬅ Retour</button>
   <div id="puzzle"></div>
 </div>
 
-<!-- ===== MESSAGE EDUCATIF ===== -->
+<!-- INFO -->
 <div id="info-box">
   <p id="info-text"></p>
   <button onclick="closeInfo()">OK</button>
 </div>
 
 <script>
-const puzzle = document.getElementById("puzzle");
-const menu = document.getElementById("menu");
-const game = document.getElementById("game");
+/* ===== STATS ===== */
+function initStats(){
+  if(!localStorage.getItem("puzzleStats")){
+    localStorage.setItem("puzzleStats",JSON.stringify({
+      sessions:0,
+      games:0,
+      wins:0
+    }));
+  }
+}
+function updateStats(key){
+  const s=JSON.parse(localStorage.getItem("puzzleStats"));
+  s[key]++;
+  localStorage.setItem("puzzleStats",JSON.stringify(s));
+}
+function showStats(){
+  const s=JSON.parse(localStorage.getItem("puzzleStats"));
+  document.getElementById("stats").innerHTML=
+    `📊 Sessions : ${s.sessions} | Parties : ${s.games} | Réussites : ${s.wins}`;
+}
 
-let size = 3;
-let draggedPiece = null;
-let currentImage = "";
+/* ===== INIT ===== */
+initStats();
+updateStats("sessions");
 
-const winSound = new Audio("audio/bravo.mp3");
+const puzzle=document.getElementById("puzzle");
+const menu=document.getElementById("menu");
+const game=document.getElementById("game");
+const infoBox=document.getElementById("info-box");
+const infoText=document.getElementById("info-text");
 
-const themeTexts = {
-  "image1.jpg": "Les falaises Dogon constituent un patrimoine architectural exceptionnel.",
-  "image2.jpg": "Les masques Dogon sont au cœur des rites et cérémonies traditionnelles.",
-  "image3.jpg": "Le tourisme culturel Dogon valorise l’histoire et les paysages du pays Dogon.",
-  "image4.jpg": "La culture Dogon repose sur des savoirs transmis de génération en génération."
+let size=3, draggedPiece=null, currentImage="";
+const winSound=new Audio("audio/bravo.mp3");
+
+const themeTexts={
+  "image1.jpg":"Les falaises Dogon sont un chef-d’œuvre architectural.",
+  "image2.jpg":"Les masques Dogon ont une fonction rituelle.",
+  "image3.jpg":"Le tourisme Dogon valorise culture et paysages.",
+  "image4.jpg":"La culture Dogon est transmise oralement."
 };
 
-function startIntro() {
-  document.getElementById("intro").style.display = "none";
-  menu.style.display = "block";
+function startIntro(){
+  document.getElementById("intro").style.display="none";
+  menu.style.display="block";
+  showStats();
 }
 
-function setImage(imagePath, thumb) {
-  currentImage = imagePath;
-  document.querySelectorAll(".thumbnail").forEach(t => t.classList.remove("selected"));
-  thumb.classList.add("selected");
+function setImage(img){
+  currentImage=img.src;
+  document.querySelectorAll(".thumbnail").forEach(t=>t.classList.remove("selected"));
+  img.classList.add("selected");
 }
 
-function launchGame(gridSize) {
-  if (!currentImage) {
-    alert("Veuillez choisir un thème.");
-    return;
-  }
-  size = gridSize;
-  menu.style.display = "none";
-  game.style.display = "block";
-  puzzle.innerHTML = "";
+function launchGame(n){
+  if(!currentImage){alert("Choisis un thème");return;}
+  size=n;
+  updateStats("games");
+  menu.style.display="none";
+  game.style.display="block";
+  puzzle.innerHTML="";
   createPuzzle();
 }
 
-function backToMenu() {
-  game.style.display = "none";
-  menu.style.display = "block";
-  puzzle.innerHTML = "";
-  currentImage = "";
-  document.querySelectorAll(".thumbnail").forEach(t => t.classList.remove("selected"));
+function backToMenu(){
+  game.style.display="none";
+  menu.style.display="block";
+  puzzle.innerHTML="";
+  currentImage="";
+  document.querySelectorAll(".thumbnail").forEach(t=>t.classList.remove("selected"));
+  showStats();
 }
 
-function createPuzzle() {
-  const pieceSize = 300 / size;
-  puzzle.style.width = "300px";
-  puzzle.style.height = "300px";
-  puzzle.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
+function createPuzzle(){
+  const pieceSize=300/size;
+  puzzle.style.width="300px";
+  puzzle.style.height="300px";
+  puzzle.style.gridTemplateColumns=`repeat(${size},1fr)`;
 
-  let positions = [...Array(size * size).keys()];
-  positions.sort(() => Math.random() - 0.5);
+  let pos=[...Array(size*size).keys()].sort(()=>Math.random()-0.5);
 
-  positions.forEach(pos => {
-    const piece = document.createElement("div");
-    piece.className = "piece";
-    piece.draggable = true;
-    piece.style.width = pieceSize + "px";
-    piece.style.height = pieceSize + "px";
-    piece.dataset.correct = pos;
+  pos.forEach(p=>{
+    const d=document.createElement("div");
+    d.className="piece";
+    d.draggable=true;
+    d.style.width=pieceSize+"px";
+    d.style.height=pieceSize+"px";
+    d.dataset.correct=p;
 
-    const x = (pos % size) * pieceSize;
-    const y = Math.floor(pos / size) * pieceSize;
-    piece.style.backgroundImage = `url('${currentImage}')`;
-    piece.style.backgroundSize = "300px 300px";
-    piece.style.backgroundPosition = `-${x}px -${y}px`;
+    const x=(p%size)*pieceSize;
+    const y=Math.floor(p/size)*pieceSize;
+    d.style.backgroundImage=`url('${currentImage}')`;
+    d.style.backgroundSize="300px 300px";
+    d.style.backgroundPosition=`-${x}px -${y}px`;
 
-    piece.addEventListener("dragstart", () => draggedPiece = piece);
-    piece.addEventListener("dragover", e => e.preventDefault());
-    piece.addEventListener("drop", () => {
-      swapPieces(draggedPiece, piece);
+    d.addEventListener("dragstart",()=>draggedPiece=d);
+    d.addEventListener("dragover",e=>e.preventDefault());
+    d.addEventListener("drop",()=>{
+      swapPieces(draggedPiece,d);
       checkVictory();
     });
-
-    puzzle.appendChild(piece);
+    puzzle.appendChild(d);
   });
 }
 
-function swapPieces(p1, p2) {
-  [p1.style.backgroundPosition, p2.style.backgroundPosition] =
-  [p2.style.backgroundPosition, p1.style.backgroundPosition];
-
-  [p1.dataset.correct, p2.dataset.correct] =
-  [p2.dataset.correct, p1.dataset.correct];
+function swapPieces(a,b){
+  [a.style.backgroundPosition,b.style.backgroundPosition]=
+  [b.style.backgroundPosition,a.style.backgroundPosition];
+  [a.dataset.correct,b.dataset.correct]=
+  [b.dataset.correct,a.dataset.correct];
 }
 
-function checkVictory() {
-  const pieces = document.querySelectorAll(".piece");
-  const win = [...pieces].every((p, i) => parseInt(p.dataset.correct) === i);
+function checkVictory(){
+  const ok=[...document.querySelectorAll(".piece")]
+    .every((p,i)=>parseInt(p.dataset.correct)===i);
 
-  if (win) {
+  if(ok){
+    winSound.currentTime=0;
     winSound.play();
-    const key = currentImage.split("/").pop();
-    document.getElementById("info-text").textContent = themeTexts[key];
-    document.getElementById("info-box").style.display = "block";
+    updateStats("wins");
+    const key=currentImage.split("/").pop();
+    infoText.textContent=themeTexts[key];
+    infoBox.style.display="block";
   }
 }
 
-function closeInfo() {
-  document.getElementById("info-box").style.display = "none";
-}
+function closeInfo(){infoBox.style.display="none";}
 </script>
 
 </body>
