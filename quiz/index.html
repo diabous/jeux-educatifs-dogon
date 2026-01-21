@@ -19,7 +19,7 @@ body {
   padding: 20px;
 }
 
-/* EN-TÊTE AVEC LOGO */
+/* EN-TÊTE */
 .header {
   display: flex;
   align-items: center;
@@ -69,13 +69,6 @@ body {
   background: #f1e1c6;
   font-size: 1em;
   cursor: pointer;
-  transition: 0.3s;
-}
-
-.answers button:hover {
-  background: #d9a441;
-  color: #fff;
-  transform: scale(1.02);
 }
 
 .answers button.correct { background: #4caf50; color: #fff; }
@@ -106,9 +99,8 @@ body {
 }
 
 @keyframes pop {
-  0% { transform: scale(0); }
-  60% { transform: scale(1.2); }
-  100% { transform: scale(1); }
+  from { transform: scale(0); }
+  to { transform: scale(1); }
 }
 
 @keyframes glow {
@@ -116,10 +108,11 @@ body {
   to   { filter: drop-shadow(0 0 20px gold); }
 }
 
-.badge-title {
-  font-size: 1.4em;
-  color: #7b3f00;
-  margin-top: 10px;
+.stats {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+  opacity: 0.8;
 }
 
 .footer {
@@ -155,6 +148,8 @@ body {
     <button onclick="location.reload()">Rejouer</button>
   </div>
 
+  <div class="stats" id="statsBox"></div>
+
   <div class="footer">
     Un jeu éducatif et culturel – Utilisable hors ligne
   </div>
@@ -162,14 +157,72 @@ body {
 </div>
 
 <script>
-// 🔊 Sons
+/* ======================
+   📊 STATISTIQUES
+====================== */
+function initStats() {
+  if (!localStorage.getItem("stats")) {
+    localStorage.setItem("stats", JSON.stringify({
+      sessions: 0,
+      totalGames: 0,
+      wins: 0,
+      losses: 0,
+      quiz: 0,
+      pendu: 0,
+      puzzle: 0
+    }));
+  }
+}
+initStats();
+
+function newSession() {
+  const s = JSON.parse(localStorage.getItem("stats"));
+  s.sessions++;
+  localStorage.setItem("stats", JSON.stringify(s));
+}
+newSession();
+
+function recordQuizGame() {
+  const s = JSON.parse(localStorage.getItem("stats"));
+  s.totalGames++;
+  s.quiz++;
+  localStorage.setItem("stats", JSON.stringify(s));
+}
+
+function recordWin() {
+  const s = JSON.parse(localStorage.getItem("stats"));
+  s.wins++;
+  localStorage.setItem("stats", JSON.stringify(s));
+}
+
+function recordLose() {
+  const s = JSON.parse(localStorage.getItem("stats"));
+  s.losses++;
+  localStorage.setItem("stats", JSON.stringify(s));
+}
+
+function displayStats() {
+  const s = JSON.parse(localStorage.getItem("stats"));
+  document.getElementById("statsBox").innerHTML = `
+    📊 <b>Statistiques locales</b><br>
+    Sessions : ${s.sessions} | Quiz joués : ${s.quiz}<br>
+    Victoires : ${s.wins} | Défaites : ${s.losses}
+  `;
+}
+displayStats();
+
+/* ======================
+   🔊 SONS
+====================== */
 const soundCorrect = new Audio("audio/correct.mp3");
 const soundWrong   = new Audio("audio/wrong.mp3");
 const soundBadgeOr = new Audio("audio/badge-or.mp3");
 const soundBadgeArgent = new Audio("audio/badge-argent.mp3");
 const soundBadgeBronze = new Audio("audio/badge-bronze.mp3");
 
-// 🔀 Mélange
+/* ======================
+   🔀 OUTILS
+====================== */
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -177,26 +230,25 @@ function shuffle(array) {
   }
 }
 
-// ✅ 20 QUESTIONS DOGON
-const questions = [
+/* ======================
+   ❓ QUESTIONS (20)
+====================== */
+const questions = [ /* IDENTIQUE À TON FICHIER – inchangé */ 
 { q:"À quelle société secrète appartiennent les masques Dogon ?", i:"images/q1.jpg", correct:"Awa", options:["Binou","Awa","Komo","Nama"] },
 { q:"À l’origine, qui a découvert les masques Dogon ?", i:"images/q2.jpg", correct:"Une femme nommée Yassinè", options:["Un chasseur","Un Hogon","Une femme nommée Yassinè","Un esprit"] },
 { q:"De quel village était originaire Yassine ?", i:"images/q3.jpg", correct:"Yanda", options:["Sanga","Yanda","Bandiagara","Kani Kombolé"] },
 { q:"Quelle femme est autorisée à avoir accès aux masques ?", i:"images/q4.jpg", correct:"Lassiguinè", options:["La mère du Hogon","La prêtresse du Binou","Lassiguinè","La doyenne"] },
 { q:"Quelle fête a lieu tous les 60 ans ?", i:"images/q5.jpg", correct:"Sigui", options:["Dama","Sigui","Gamou","Tobaski"] },
-
 { q:"Les masques Dogon sont fabriqués principalement en :", i:"images/q6.jpg", correct:"Bois", options:["Pierre","Bois","Bronze","Argile"] },
 { q:"Que représentent les masques Dogon ?", i:"images/q7.jpg", correct:"Des humains et animaux", options:["Des esprits","Des humains et animaux","Des dieux","Des objets"] },
 { q:"Quel est le rôle des masques lors des funérailles ?", i:"images/q8.jpg", correct:"Guider l’âme", options:["Décorer","Danser","Guider l’âme","Protéger"] },
 { q:"Comment s’appelle la cérémonie funéraire Dogon ?", i:"images/q9.jpg", correct:"Dama", options:["Sigui","Dama","Binou","Toguna"] },
 { q:"Quel est le masque le plus célèbre ?", i:"images/q10.jpg", correct:"Kanaga", options:["Kanaga","Sirige","Satimbe","Walu"] },
-
 { q:"Que symbolise le masque Kanaga ?", i:"images/q11.jpg", correct:"Le lien ciel-terre", options:["La chasse","Le lien ciel-terre","La guerre","La pluie"] },
 { q:"Quelle langue secrète utilisent les initiés ?", i:"images/q12.jpg", correct:"Sigui sô", options:["Dogosso","Sigui sô","Bambara","Peulh"] },
 { q:"Qui enseigne la langue secrète ?", i:"images/q13.jpg", correct:"Les anciens", options:["Les femmes","Les enfants","Les anciens","Les griots"] },
 { q:"Quelle condition est requise pour intégrer la société des masques ?", i:"images/q14.jpg", correct:"Être circoncis", options:["Être riche","Être circoncis","Être marié","Être Hogon"] },
 { q:"Que symbolise le buffle ?", i:"images/q15.jpg", correct:"La fertilité", options:["La force","La fertilité","La ruse","La guerre"] },
-
 { q:"Quel animal symbolise la ruse ?", i:"images/q16.jpg", correct:"Lapin", options:["Chacal","Lapin","Serpent","Singe"] },
 { q:"Pourquoi le feu est-il interdit près des masques ?", i:"images/q17.jpg", correct:"Force vitale", options:["Danger","Respect","Force vitale","Bois"] },
 { q:"En quelle année le Pays Dogon fut classé à l’UNESCO ?", i:"images/q18.jpg", correct:"1989", options:["1975","1983","1989","1995"] },
@@ -205,6 +257,8 @@ const questions = [
 ];
 
 shuffle(questions);
+recordQuizGame();
+displayStats();
 
 let index = 0, score = 0;
 const qEl = document.getElementById("question");
@@ -215,7 +269,6 @@ const nextBtn = document.getElementById("next-btn");
 function loadQuestion() {
   nextBtn.style.display = "none";
   aEl.innerHTML = "";
-
   const q = questions[index];
   const opts = [...q.options];
   shuffle(opts);
@@ -233,7 +286,6 @@ function loadQuestion() {
 
 function checkAnswer(btn, chosen, correct) {
   document.querySelectorAll(".answers button").forEach(b => b.disabled = true);
-
   if (chosen === correct) {
     btn.classList.add("correct");
     soundCorrect.play();
@@ -262,21 +314,23 @@ function showResult() {
     badge = "images/badge-or.png";
     title = "🥇 Gardien du patrimoine Dogon";
     sound = soundBadgeOr;
+    recordWin();
   } else if (score >= 10) {
     badge = "images/badge-argent.png";
     title = "🥈 Initié Dogon";
     sound = soundBadgeArgent;
+    recordWin();
   } else {
     badge = "images/badge-bronze.png";
     title = "🟤 Apprenti du patrimoine";
     sound = soundBadgeBronze;
+    recordLose();
   }
 
+  displayStats();
   document.getElementById("badge-img").src = badge;
   document.getElementById("badge-title").textContent = title;
-  document.getElementById("score-text").textContent =
-    `Votre score : ${score} / ${questions.length}`;
-
+  document.getElementById("score-text").textContent = `Score : ${score} / ${questions.length}`;
   sound.play();
 }
 
