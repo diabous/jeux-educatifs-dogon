@@ -72,6 +72,12 @@ button.restart {
   border-radius: 10px;
   cursor: pointer;
 }
+
+.stats {
+  margin-top: 20px;
+  font-size: 14px;
+  opacity: 0.8;
+}
 </style>
 </head>
 
@@ -88,24 +94,85 @@ button.restart {
     <button class="restart" onclick="startGame()">🔁 Rejouer</button>
   </div>
 
+  <div class="stats" id="statsBox"></div>
+
   <p style="opacity:0.7;margin-top:15px">
     Jeu éducatif – Patrimoine culturel Dogon – Hors ligne
   </p>
 </div>
 
 <script>
-// 🔊 Sons
+/* =========================
+   📊 STATISTIQUES LOCALES
+========================= */
+function initStats() {
+  if (!localStorage.getItem("stats")) {
+    localStorage.setItem("stats", JSON.stringify({
+      sessions: 0,
+      totalGames: 0,
+      wins: 0,
+      losses: 0,
+      puzzle: 0,
+      quiz: 0,
+      pendu: 0
+    }));
+  }
+}
+initStats();
+
+function newSession() {
+  const s = JSON.parse(localStorage.getItem("stats"));
+  s.sessions++;
+  localStorage.setItem("stats", JSON.stringify(s));
+}
+newSession();
+
+function recordGame() {
+  const s = JSON.parse(localStorage.getItem("stats"));
+  s.totalGames++;
+  s.pendu++;
+  localStorage.setItem("stats", JSON.stringify(s));
+}
+
+function recordWin() {
+  const s = JSON.parse(localStorage.getItem("stats"));
+  s.wins++;
+  localStorage.setItem("stats", JSON.stringify(s));
+}
+
+function recordLose() {
+  const s = JSON.parse(localStorage.getItem("stats"));
+  s.losses++;
+  localStorage.setItem("stats", JSON.stringify(s));
+}
+
+function displayStats() {
+  const s = JSON.parse(localStorage.getItem("stats"));
+  document.getElementById("statsBox").innerHTML = `
+    📊 <b>Statistiques locales</b><br>
+    Sessions : ${s.sessions} | Parties pendu : ${s.pendu}<br>
+    Victoires : ${s.wins} | Défaites : ${s.losses}
+  `;
+}
+displayStats();
+
+/* =========================
+   🔊 SONS
+========================= */
 const soundGood = new Audio("audio/good.mp3");
 const soundBad  = new Audio("audio/bad.mp3");
 const soundWin  = new Audio("audio/win.mp3");
 const soundLose = new Audio("audio/lose.mp3");
 
-// 🧠 Mots culturels Dogon
+/* =========================
+   🧠 MOTS DOGON
+========================= */
 const words = [
   { word:"AWA", hint:"Société secrète liée aux masques Dogon", info:"La société Awa est responsable des masques rituels." },
   { word:"KANAGA", hint:"Masque le plus célèbre", info:"Le Kanaga symbolise le lien entre le ciel et la terre." },
   { word:"SIGUI", hint:"Cérémonie qui a lieu tous les 60 ans", info:"Le Sigui marque la transmission du savoir ancestral." },
   { word:"DAMA", hint:"Cérémonie funéraire Dogon", info:"Le Dama guide l’âme du défunt vers les ancêtres." },
+  { word:"BINOU", hint:"Culte spirituel Dogon", info:"Le Binou est un culte de protection et d’identité clanique." },
   { word:"TOGUNA", hint:"Maison de la parole", info:"La Toguna est l’espace de discussion des anciens." },
   { word:"HOGON", hint:"Chef spirituel Dogon", info:"Le Hogon est le gardien des traditions." },
   { word:"YANDA", hint:"Village lié à la découverte des masques", info:"Yanda est lié à la légende de Yassinè." },
@@ -113,11 +180,15 @@ const words = [
   { word:"UNESCO", hint:"Organisation ayant classé le Pays Dogon", info:"Le Pays Dogon est classé patrimoine mondial." }
 ];
 
-let selectedWord, guessed, attempts;
-let gameOver = false;
+let selectedWord, guessed, attempts, gameOver = false;
 
-// ▶️ Démarrage
+/* =========================
+   ▶️ DÉMARRAGE
+========================= */
 function startGame() {
+  recordGame();
+  displayStats();
+
   const item = words[Math.floor(Math.random() * words.length)];
   selectedWord = item.word;
   guessed = [];
@@ -130,30 +201,24 @@ function startGame() {
   updateWord();
 }
 
-// 🔤 Affichage du mot
 function updateWord() {
-  const display = selectedWord
-    .split("")
-    .map(l => guessed.includes(l) ? l : "_")
-    .join(" ");
-
+  const display = selectedWord.split("").map(l => guessed.includes(l) ? l : "_").join(" ");
   document.getElementById("word").textContent = display;
 
   if (!display.includes("_") && !gameOver) {
     gameOver = true;
-    soundWin.currentTime = 0;
+    recordWin();
+    displayStats();
     soundWin.play();
     document.getElementById("status").textContent = "🎉 Bravo ! " + getInfo();
     disableKeyboard();
   }
 }
 
-// ⌨️ Clavier
 function createKeyboard() {
   const keys = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   const kb = document.getElementById("keyboard");
   kb.innerHTML = "";
-
   keys.split("").forEach(letter => {
     const btn = document.createElement("button");
     btn.textContent = letter;
@@ -162,19 +227,15 @@ function createKeyboard() {
   });
 }
 
-// 🎯 Vérification
 function guessLetter(letter, btn) {
   if (gameOver) return;
-
   btn.disabled = true;
 
   if (selectedWord.includes(letter)) {
     guessed.push(letter);
-    soundGood.currentTime = 0;
     soundGood.play();
   } else {
     attempts--;
-    soundBad.currentTime = 0;
     soundBad.play();
   }
 
@@ -183,15 +244,15 @@ function guessLetter(letter, btn) {
 
   if (attempts <= 0 && !gameOver) {
     gameOver = true;
+    recordLose();
+    displayStats();
     document.getElementById("word").textContent = selectedWord.split("").join(" ");
     document.getElementById("status").textContent = "❌ Perdu ! " + getInfo();
-    soundLose.currentTime = 0;
     soundLose.play();
     disableKeyboard();
   }
 }
 
-// 📘 Info finale
 function getInfo() {
   return words.find(w => w.word === selectedWord).info;
 }
@@ -200,7 +261,7 @@ function disableKeyboard() {
   document.querySelectorAll(".keyboard button").forEach(b => b.disabled = true);
 }
 
-// ▶️ Lancer automatiquement
+/* ▶️ LANCEMENT */
 startGame();
 </script>
 
