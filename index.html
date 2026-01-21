@@ -8,119 +8,161 @@
 <style>
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: "Segoe UI", Arial, sans-serif;
   background: linear-gradient(#fffbe6, #e6f5ec);
+  color: #333;
   text-align: center;
 }
 
-/* ===== CONTENEUR ===== */
-#portal {
-  padding: 30px 20px;
+/* ===== EN-TÊTE ===== */
+header {
+  padding: 30px 20px 10px;
 }
 
-/* ===== LOGOS ===== */
 .logos {
   display: flex;
   justify-content: center;
   gap: 40px;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 
 .logos img {
-  height: 100px;
+  height: 90px;
 }
 
-/* ===== TITRES ===== */
 h1 {
   color: #2c7a4b;
+  margin-bottom: 10px;
 }
 
 .subtitle {
-  font-size: 18px;
-  margin-bottom: 30px;
-}
-
-/* ===== GRILLE JEUX ===== */
-.games-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 25px;
-  max-width: 900px;
+  font-size: 17px;
+  max-width: 700px;
   margin: auto;
 }
 
-/* ===== CARTES ===== */
-.game-card {
+/* ===== CARTES DE JEUX ===== */
+.games {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 30px;
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.card {
   background: white;
-  padding: 22px;
   border-radius: 18px;
+  padding: 25px;
   text-decoration: none;
-  color: black;
-  box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+  color: inherit;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
   transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.game-card img {
-  height: 80px;
-  margin-bottom: 12px;
-}
-
-.game-card:hover {
+.card:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 25px rgba(44,122,75,0.7);
+  box-shadow: 0 0 25px rgba(44,122,75,0.6);
 }
 
-/* ===== FOOTER ===== */
+.card img {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  margin-bottom: 15px;
+}
+
+.card h3 {
+  color: #2c7a4b;
+  margin-bottom: 10px;
+}
+
+.card p {
+  font-size: 15px;
+}
+
+/* ===== PIED DE PAGE ===== */
 footer {
-  margin-top: 35px;
+  margin: 30px 0 10px;
   font-style: italic;
-  color: #555;
+  opacity: 0.7;
+}
+
+/* ===== STATS ===== */
+.stats {
+  font-size: 14px;
+  margin-bottom: 20px;
 }
 </style>
 </head>
 
 <body>
 
-<div id="portal">
-
+<header>
   <div class="logos">
     <img src="images/logo-service.png" alt="Logo Service">
     <img src="images/logo-festival.png" alt="Logo Festival">
   </div>
 
   <h1>🎓 Jeux éducatifs culturels Dogon</h1>
-
   <p class="subtitle">
-    Découvre le patrimoine culturel Dogon à travers des jeux ludiques et éducatifs
+    Découvre le patrimoine culturel Dogon à travers des jeux ludiques,
+    éducatifs et accessibles à tous.
   </p>
+</header>
 
-  <div class="games-grid">
+<section class="games">
 
-    <a href="puzzle/index.html" class="game-card">
-      <img src="images/icons/puzzle.png">
-      <h3>🧩 Puzzle</h3>
-      <p>Reconstitue les images du patrimoine Dogon</p>
-    </a>
+  <a href="puzzle/index.html" class="card" onclick="countGame('puzzle')">
+    <img src="images/icons/puzzle.png" alt="Puzzle Dogon">
+    <h3>🧩 Puzzle</h3>
+    <p>Reconstitue les images du patrimoine Dogon</p>
+  </a>
 
-    <a href="quiz/index.html" class="game-card">
-      <img src="images/icons/quiz.png">
-      <h3>❓ Quiz</h3>
-      <p>Teste tes connaissances culturelles</p>
-    </a>
+  <a href="quiz/index.html" class="card" onclick="countGame('quiz')">
+    <img src="images/icons/quiz.png" alt="Quiz Dogon">
+    <h3>❓ Quiz</h3>
+    <p>Teste tes connaissances culturelles</p>
+  </a>
 
-    <a href="pendu/index.html" class="game-card">
-      <img src="images/icons/pendu.png">
-      <h3>🔤 Pendu</h3>
-      <p>Devine les mots du patrimoine Dogon</p>
-    </a>
+  <a href="pendu/index.html" class="card" onclick="countGame('pendu')">
+    <img src="images/icons/pendu.png" alt="Pendu Dogon">
+    <h3>🔤 Pendu</h3>
+    <p>Devine les mots du patrimoine Dogon</p>
+  </a>
 
-  </div>
+</section>
 
-  <footer>
-    Jeux éducatifs – Utilisables hors ligne
-  </footer>
+<footer>
+  Jeux éducatifs – Utilisables hors ligne
+</footer>
 
-</div>
+<div class="stats" id="stats"></div>
+
+<script>
+// ===== STATISTIQUES LOCALES (hors ligne) =====
+if (!localStorage.getItem("players")) {
+  localStorage.setItem("players", 1);
+  localStorage.setItem("puzzle", 0);
+  localStorage.setItem("quiz", 0);
+  localStorage.setItem("pendu", 0);
+}
+
+function countGame(game) {
+  localStorage.setItem(game, parseInt(localStorage.getItem(game)) + 1);
+}
+
+function showStats() {
+  document.getElementById("stats").innerHTML =
+    `👥 Joueurs : ${localStorage.getItem("players")} |
+     🧩 Puzzle : ${localStorage.getItem("puzzle")} |
+     ❓ Quiz : ${localStorage.getItem("quiz")} |
+     🔤 Pendu : ${localStorage.getItem("pendu")}`;
+}
+
+showStats();
+</script>
 
 </body>
 </html>
